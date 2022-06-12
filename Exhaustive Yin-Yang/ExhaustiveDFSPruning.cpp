@@ -39,6 +39,11 @@ bool check_2by2(vector<vector<char>> pb)
     return true;
 }
 
+bool valid_cell(int r, int c)
+{
+    return ((r >= 0) && (r < m ) && (c >=0) && (c < n));
+}
+
 int check_connected_dfs(vector<vector<char>> pb, int r, int c, char type)
 {
     vector<vector<int>> checklist(m, vector<int> (n, 0));
@@ -52,44 +57,21 @@ int check_connected_dfs(vector<vector<char>> pb, int r, int c, char type)
         stack.pop();
         int row = temp[0];
         int col = temp[1];
-        int right = col + 1;
-        int down = row + 1;
-        int left = col - 1;
-        int up = row - 1;
-        if ((right < n) && (checklist[row][right] == 0))
+        //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
+        int dr[] = {0,1,0,-1};
+        int dc[] = {1,0,-1,0};
+        for (size_t i = 0; i < 4; i++)
         {
-            checklist[row][right] = 1;
-            if (pb[row][right] == type)
+            int adj_row = row + dr[i];
+            int adj_col = col + dc[i];
+            if (valid_cell(adj_row, adj_col) && (checklist[adj_row][adj_col] == 0))
             {
-                stack.push({row,right});
-                count++;
-            }
-        }
-        if ((down < m) && (checklist[down][col] == 0))
-        {
-            checklist[down][col] = 1;
-            if (pb[down][col] == type)
-            {
-                stack.push({down,col});
-                count++;
-            }
-        }
-        if ((left >= 0) && (checklist[row][left] == 0))
-        {
-            checklist[row][left] = 1;
-            if (pb[row][left] == type)
-            {
-                stack.push({row,left});
-                count++;
-            } 
-        }
-        if ((up >= 0) && (checklist[up][col] == 0))
-        {
-            checklist[up][col] = 1;
-            if (pb[up][col] == type)
-            {
-                stack.push({up,col});
-                count++;
+                checklist[adj_row][adj_col] = 1;
+                if (pb[adj_row][adj_col] == type)
+                {
+                    stack.push({adj_row,adj_col});
+                    count++;
+                }
             }
         }
     }
@@ -109,46 +91,23 @@ int check_connected_bfs(vector<vector<char>> pb, int r, int c, char type)
         queue.pop();
         int row = temp[0];
         int col = temp[1];
-        int right = col + 1;
-        int down = row + 1;
-        int left = col - 1;
-        int up = row - 1;
-        if ((right < n) && (checklist[row][right] == 0))
+        //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
+        int dr[] = {0,1,0,-1};
+        int dc[] = {1,0,-1,0};
+        for (size_t i = 0; i < 4; i++)
         {
-            checklist[row][right] = 1;
-            if (pb[row][right] == type)
+            int adj_row = row + dr[i];
+            int adj_col = col + dc[i];
+            if (valid_cell(adj_row, adj_col) && (checklist[adj_row][adj_col] == 0))
             {
-                queue.push({row,right});
-                count++;
+                checklist[adj_row][adj_col] = 1;
+                if (pb[adj_row][adj_col] == type)
+                {
+                    queue.push({adj_row,adj_col});
+                    count++;
+                }
             }
-        }
-        if ((down < m) && (checklist[down][col] == 0))
-        {
-            checklist[down][col] = 1;
-            if (pb[down][col] == type)
-            {
-                queue.push({down,col});
-                count++;
-            }
-        }
-        if ((left >= 0) && (checklist[row][left] == 0))
-        {
-            checklist[row][left] = 1;
-            if (pb[row][left] == type)
-            {
-                queue.push({row,left});
-                count++;
-            } 
-        }
-        if ((up >= 0) && (checklist[up][col] == 0))
-        {
-            checklist[up][col] = 1;
-            if (pb[up][col] == type)
-            {
-                queue.push({up,col});
-                count++;
-            }
-        }
+        } 
     }
     return count;
 }
@@ -199,52 +158,20 @@ bool verify(vector<vector<char>> pb)
     }
 }
 
-bool check_surround_2by2(vector<vector<char>> pb, int r, int c)
+bool check_surround_2by2(vector<vector<char>> pb, int row, int col)
 {
-    int right = c + 1;
-    int down = r + 1;
-    int left = c - 1;
-    int up = r - 1;
+    //Row and Column Directions representing (row + 1, col + 1), (row - 1, col + 1), (row + 1, col - 1), and (row - 1, col - 1)
+    int dr[] = {1,-1,1,-1};
+    int dc[] = {1,1,-1,-1};
     string s;
-    if (up >= 0)
+    for (size_t i = 0; i < 4; i++)
     {
-        if (left >=0)
+        int adj_row = row + dr[i];
+        int adj_col = col + dc[i];
+        if(valid_cell(adj_row,adj_col))
         {
             stringstream ss;
-            ss << pb[r][c] << pb[r][left] << pb[up][c] << pb[up][left];
-            ss >> s;
-            if (compare_2by2(s))
-            {
-                return false;
-            }
-        }
-        if (right < n)
-        {
-            stringstream ss;
-            ss << pb[r][c] << pb[r][right] << pb[up][c] << pb[up][right];
-            ss >> s;
-            if (compare_2by2(s))
-            {
-                return false;
-            }
-        }
-    }
-    if (down < m)
-    {
-        if (left >=0)
-        {
-            stringstream ss;
-            ss << pb[r][c] << pb[r][left] << pb[down][c] << pb[down][left];
-            ss >> s;
-            if (compare_2by2(s))
-            {
-                return false;
-            }
-        }
-        if (right < n)
-        {
-            stringstream ss;
-            ss << pb[r][c] << pb[r][right] << pb[down][c] << pb[down][right];
+            ss << pb[row][col] << pb[row][adj_col] << pb[adj_row][col] << pb[adj_row][adj_col];
             ss >> s;
             if (compare_2by2(s))
             {
