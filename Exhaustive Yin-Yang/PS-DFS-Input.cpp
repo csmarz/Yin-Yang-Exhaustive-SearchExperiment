@@ -13,6 +13,7 @@ using namespace std::chrono;
 
 int m = 0;
 int n = 0;
+int total = 0;
 
 bool compare_2by2(string s)
 {
@@ -157,6 +158,79 @@ bool verify(vector<vector<char>> pb)
     }
 }
 
+bool check_surround_2by2(vector<vector<char>> pb, int row, int col)
+{
+    //Row and Column Directions representing (row + 1, col + 1), (row - 1, col + 1), (row + 1, col - 1), and (row - 1, col - 1)
+    int dr[] = {1,-1,1,-1};
+    int dc[] = {1,1,-1,-1};
+    string s;
+    for (size_t i = 0; i < 4; i++)
+    {
+        int adj_row = row + dr[i];
+        int adj_col = col + dc[i];
+        if(valid_cell(adj_row,adj_col))
+        {
+            stringstream ss;
+            ss << pb[row][col] << pb[row][adj_col] << pb[adj_row][col] << pb[adj_row][adj_col];
+            ss >> s;
+            if (compare_2by2(s))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+vector<vector<vector<char>>> get_config(vector<vector<char>> pb)
+{
+    vector<vector<vector<char>>> configs;
+    vector<vector<char>> config = pb;
+    configs.push_back(config);
+    for (size_t i = 0; i < m; i++)
+    {
+        for (size_t j = 0; j < n; j++)
+        {
+            if (pb[i][j] == '*')
+            {
+                vector<vector<vector<char>>> new_list;
+                while (!configs.empty())
+                {
+                    vector<vector<char>> new_config = configs.back();
+                    configs.pop_back();
+                    new_config[i][j] = '0';
+                    if (check_surround_2by2(new_config, i, j))
+                    {
+                        new_list.push_back(new_config);
+                    }
+                    new_config[i][j] = '1';
+                    if (check_surround_2by2(new_config, i, j))
+                    {
+                        new_list.push_back(new_config);
+                    }
+                }
+                configs = new_list;
+            }
+            
+        }
+        
+    }
+    return configs;
+}
+
+void show_config(vector<vector<char>> pb)
+{
+    cout << endl;
+    for (size_t i = 0; i < m; i++)
+    {
+        for (size_t j = 0; j < n; j++)
+        {
+            cout << pb[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
 int main()
 {
     char x;
@@ -171,22 +245,28 @@ int main()
         }
     }
     vector<vector<char>> playboard(m, vector<char> (n));
-    for (size_t i = 0; i < 3; i++)
+    for (size_t i = 0; i < 1; i++)
     {
+        total = 0;
         playboard = playboardtemp;
         auto start = high_resolution_clock::now();
-        // codes
-        if (verify(playboard))
+        if (check_2by2(playboard) == true)
         {
-            cout << "Configuration is a solution" << endl;
+            vector<vector<vector<char>>> configs = get_config(playboard);
+            vector<vector<vector<char>>> solutions;
+            for (auto &config : configs)
+            {
+                bool valid = verify(config);
+                if (valid)
+                {
+                    total++;
+                    solutions.push_back(config);
+                }
+            }
         }
-        else
-        {
-            cout << "Configuration is NOT a solution" << endl;
-        }
-        // codes
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<microseconds>(stop - start);
+        cout << total << endl;
         cout << "Duration : " << duration.count() * 0.000001 << " seconds" << endl;
     }
     return 0;

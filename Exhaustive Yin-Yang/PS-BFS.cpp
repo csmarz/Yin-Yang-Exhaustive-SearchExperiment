@@ -50,6 +50,9 @@ int check_connected_dfs(vector<vector<char>> pb, int r, int c, char type)
     checklist[r][c] = 1;
     stack<array<int, 2>> stack;
     stack.push({r,c});
+    //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
+    int dr[] = {0,1,0,-1};
+    int dc[] = {1,0,-1,0};
     int count = 1;
     while (!stack.empty())
     {
@@ -57,9 +60,6 @@ int check_connected_dfs(vector<vector<char>> pb, int r, int c, char type)
         stack.pop();
         int row = temp[0];
         int col = temp[1];
-        //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
-        int dr[] = {0,1,0,-1};
-        int dc[] = {1,0,-1,0};
         for (size_t i = 0; i < 4; i++)
         {
             int adj_row = row + dr[i];
@@ -84,6 +84,9 @@ int check_connected_bfs(vector<vector<char>> pb, int r, int c, char type)
     checklist[r][c] = 1;
     queue<array<int, 2>> queue;
     queue.push({r,c});
+    //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
+    int dr[] = {0,1,0,-1};
+    int dc[] = {1,0,-1,0};
     int count = 1;
     while (!queue.empty())
     {
@@ -91,9 +94,6 @@ int check_connected_bfs(vector<vector<char>> pb, int r, int c, char type)
         queue.pop();
         int row = temp[0];
         int col = temp[1];
-        //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
-        int dr[] = {0,1,0,-1};
-        int dc[] = {1,0,-1,0};
         for (size_t i = 0; i < 4; i++)
         {
             int adj_row = row + dr[i];

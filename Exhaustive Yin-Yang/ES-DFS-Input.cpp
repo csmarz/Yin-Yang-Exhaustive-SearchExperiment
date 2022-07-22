@@ -50,6 +50,9 @@ int check_connected_dfs(vector<vector<char>> pb, int r, int c, char type)
     checklist[r][c] = 1;
     stack<array<int, 2>> stack;
     stack.push({r,c});
+    //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
+    int dr[] = {0,1,0,-1};
+    int dc[] = {1,0,-1,0};
     int count = 1;
     while (!stack.empty())
     {
@@ -57,9 +60,6 @@ int check_connected_dfs(vector<vector<char>> pb, int r, int c, char type)
         stack.pop();
         int row = temp[0];
         int col = temp[1];
-        //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
-        int dr[] = {0,1,0,-1};
-        int dc[] = {1,0,-1,0};
         for (size_t i = 0; i < 4; i++)
         {
             int adj_row = row + dr[i];
@@ -84,6 +84,9 @@ int check_connected_bfs(vector<vector<char>> pb, int r, int c, char type)
     checklist[r][c] = 1;
     queue<array<int, 2>> queue;
     queue.push({r,c});
+    //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
+    int dr[] = {0,1,0,-1};
+    int dc[] = {1,0,-1,0};
     int count = 1;
     while (!queue.empty())
     {
@@ -91,9 +94,6 @@ int check_connected_bfs(vector<vector<char>> pb, int r, int c, char type)
         queue.pop();
         int row = temp[0];
         int col = temp[1];
-        //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
-        int dr[] = {0,1,0,-1};
-        int dc[] = {1,0,-1,0};
         for (size_t i = 0; i < 4; i++)
         {
             int adj_row = row + dr[i];
@@ -142,11 +142,11 @@ bool verify(vector<vector<char>> pb)
     int w_valid = 0;
     if(b_start[0] != -1)
     {
-        b_valid = check_connected_bfs(pb, b_start[0], b_start[1], '0');
+        b_valid = check_connected_dfs(pb, b_start[0], b_start[1], '0');
     }
     if(w_start[0] != -1)
     {
-        w_valid = check_connected_bfs(pb, w_start[0], w_start[1], '1');
+        w_valid = check_connected_dfs(pb, w_start[0], w_start[1], '1');
     }
     if ((b_valid == b_count) && (w_valid == w_count))
     {
@@ -269,7 +269,8 @@ int main()
     {
         for (size_t j = 0; j < n; j++)
         {
-            playboardtemp[i][j] = '*';
+            cin >> x;
+            playboardtemp[i][j] = x;
         }
     }
     vector<vector<char>> playboard(m, vector<char> (n));

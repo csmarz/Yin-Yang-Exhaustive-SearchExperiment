@@ -38,12 +38,54 @@ bool check_2by2(vector<vector<char>> pb)
     return true;
 }
 
+bool valid_cell(int r, int c)
+{
+    return ((r >= 0) && (r < m ) && (c >=0) && (c < n));
+}
+
+int check_connected_dfs(vector<vector<char>> pb, int r, int c, char type)
+{
+    vector<vector<int>> checklist(m, vector<int> (n, 0));
+    checklist[r][c] = 1;
+    stack<array<int, 2>> stack;
+    stack.push({r,c});
+    //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
+    int dr[] = {0,1,0,-1};
+    int dc[] = {1,0,-1,0};
+    int count = 1;
+    while (!stack.empty())
+    {
+        array<int, 2> temp = stack.top();
+        stack.pop();
+        int row = temp[0];
+        int col = temp[1];
+        for (size_t i = 0; i < 4; i++)
+        {
+            int adj_row = row + dr[i];
+            int adj_col = col + dc[i];
+            if (valid_cell(adj_row, adj_col) && (checklist[adj_row][adj_col] == 0))
+            {
+                checklist[adj_row][adj_col] = 1;
+                if (pb[adj_row][adj_col] == type)
+                {
+                    stack.push({adj_row,adj_col});
+                    count++;
+                }
+            }
+        }
+    }
+    return count;
+}
+
 int check_connected_bfs(vector<vector<char>> pb, int r, int c, char type)
 {
     vector<vector<int>> checklist(m, vector<int> (n, 0));
     checklist[r][c] = 1;
     queue<array<int, 2>> queue;
     queue.push({r,c});
+    //Row and Column Directions representing (row, col + 1), (row + 1, col), (row, col - 1), and (row - 1, col)
+    int dr[] = {0,1,0,-1};
+    int dc[] = {1,0,-1,0};
     int count = 1;
     while (!queue.empty())
     {
@@ -51,46 +93,20 @@ int check_connected_bfs(vector<vector<char>> pb, int r, int c, char type)
         queue.pop();
         int row = temp[0];
         int col = temp[1];
-        int right = col + 1;
-        int down = row + 1;
-        int left = col - 1;
-        int up = row - 1;
-        if ((right < n) && (checklist[row][right] == 0))
+        for (size_t i = 0; i < 4; i++)
         {
-            checklist[row][right] = 1;
-            if (pb[row][right] == type)
+            int adj_row = row + dr[i];
+            int adj_col = col + dc[i];
+            if (valid_cell(adj_row, adj_col) && (checklist[adj_row][adj_col] == 0))
             {
-                queue.push({row,right});
-                count++;
+                checklist[adj_row][adj_col] = 1;
+                if (pb[adj_row][adj_col] == type)
+                {
+                    queue.push({adj_row,adj_col});
+                    count++;
+                }
             }
-        }
-        if ((down < m) && (checklist[down][col] == 0))
-        {
-            checklist[down][col] = 1;
-            if (pb[down][col] == type)
-            {
-                queue.push({down,col});
-                count++;
-            }
-        }
-        if ((left >= 0) && (checklist[row][left] == 0))
-        {
-            checklist[row][left] = 1;
-            if (pb[row][left] == type)
-            {
-                queue.push({row,left});
-                count++;
-            } 
-        }
-        if ((up >= 0) && (checklist[up][col] == 0))
-        {
-            checklist[up][col] = 1;
-            if (pb[up][col] == type)
-            {
-                queue.push({up,col});
-                count++;
-            }
-        }
+        } 
     }
     return count;
 }
