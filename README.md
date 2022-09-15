@@ -67,3 +67,5 @@ Example:
 ### Expeted Running Time
 
 The asymptotic time complexity for the solver programs is O(max(mn,2^(e))) where 'e' is the number of empty cells. The more empty cells in a Yin-Yang instance, the longer the program runs.
+
+For more information about this puzzle, see https://erikdemaine.org/fonts/yinyang/ .
